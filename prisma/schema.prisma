@@ -7,32 +7,480 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  email String @unique
-  hash  String
-
-  firstName String?
-  lastName  String?
-
-  bookmarks Bookmark[]
-  @@map("users")
+model c_receber_lab {
+  HISTORICO      String?   @default("FECHAMENTO SEMANAL") @db.VarChar(50)
+  DOCUMENTO      Int       @id @default(autoincrement())
+  COD_CLIENTE    Int?      @default(0) @map("COD CLIENTE")
+  EMISS_O        DateTime? @map("EMISSÃO") @db.DateTime(0)
+  VENCIMENTO     DateTime? @db.DateTime(0)
+  VALORDUP       Decimal?  @default(0.0000) @db.Decimal(19, 4)
+  DATA_RECEBIDO  DateTime? @map("DATA RECEBIDO") @db.DateTime(0)
+  VALOR_RECEBIDO Decimal?  @default(0.0000) @map("VALOR RECEBIDO") @db.Decimal(19, 4)
+  VALOR_ATUAL    Decimal?  @default(0.0000) @map("VALOR ATUAL") @db.Decimal(19, 4)
+  PORTADOR       String?   @default("CARTEIRA") @db.VarChar(50)
+  OBS            String?   @db.LongText
+  NOSSO_NUMERO   String?   @map("NOSSO NUMERO") @db.VarChar(50)
 }
 
-model Bookmark {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model contas_a_receber {
+  Cliente      String?   @db.VarChar(50)
+  Observa__o   String?   @map("Observação") @db.VarChar(255)
+  Pedido       Float?
+  Parcela      String?   @db.VarChar(255)
+  Valor        Decimal?  @db.Decimal(19, 4)
+  LOJA         Float?
+  Liquida__o   DateTime? @map("Liquidação") @db.DateTime(0)
+  CodigodaLoja Int?
+  Vencimento   DateTime? @db.DateTime(0)
+  Comiss_o     String?   @map("Comissão") @db.VarChar(255)
+  s_ColLineage Bytes?
+  s_Generation Int?
+  s_GUID       String?   @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage    Bytes?
 
-  title       String
-  description String?
-  link        String
+  @@index([s_Generation], map: "s_Generation")
+  @@map("contas a receber")
+  @@ignore
+}
 
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model erros_ao_colar {
+  Cidade String? @db.VarChar(255)
 
-  @@map("bookmarks")
+  @@map("erros ao colar")
+  @@ignore
+}
+
+model fornecedor_lab {
+  C_digo     Int     @id @default(autoincrement()) @map("Código")
+  Fornecedor String? @db.VarChar(50)
+}
+
+model sa_das_estoque {
+  CONTROLE_SAIDA           Int      @unique(map: "CONTROLE SAIDA") @default(autoincrement()) @map("CONTROLE SAIDA")
+  Numero_do_Pedido         Int?     @map("Numero do Pedido")
+  CODIGO_MERCADORIA        Int?     @default(0) @map("CODIGO MERCADORIA")
+  Qte                      Float?   @default(0) @db.Float
+  Vr_Unit_Vendas           Decimal? @map("Vr Unit Vendas") @db.Decimal(19, 4)
+  Refer_ncia               String?  @map("Referência") @db.VarChar(20)
+  Valor_Unit_rio_de_compra Decimal? @default(0.0000) @map("Valor Unitário de compra") @db.Decimal(19, 4)
+  Qte_de_entrada           Int?     @default(0) @map("Qte de entrada")
+  s_ColLineage             Bytes?
+  s_Generation             Int?
+  s_GUID                   String?  @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage                Bytes?
+
+  @@index([CODIGO_MERCADORIA], map: "CODIGO MERCADORIA")
+  @@index([s_Generation], map: "s_Generation")
+  @@map("saídas estoque")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model sa_das_estoque_conflito {
+  ConflictRowGuid          String?  @db.VarChar(38)
+  CONTROLE_SAIDA           Int?     @map("CONTROLE SAIDA")
+  Numero_do_Pedido         Int?     @map("Numero do Pedido")
+  CODIGO_MERCADORIA        Int?     @map("CODIGO MERCADORIA")
+  Qte                      Float?   @db.Float
+  Vr_Unit_Vendas           Decimal? @map("Vr Unit Vendas") @db.Decimal(19, 4)
+  Refer_ncia               String?  @map("Referência") @db.VarChar(20)
+  Valor_Unit_rio_de_compra Decimal? @map("Valor Unitário de compra") @db.Decimal(19, 4)
+  Qte_de_entrada           Int?     @map("Qte de entrada")
+  s_ColLineage             Bytes?
+  s_Generation             Int?
+  s_GUID                   String?  @db.VarChar(38)
+  s_Lineage                Bytes?
+
+  @@index([ConflictRowGuid], map: "ConflictRowGuid")
+  @@index([s_GUID], map: "s_GUID")
+  @@index([s_Generation], map: "s_Generation")
+  @@map("saídas estoque_conflito")
+  @@ignore
+}
+
+model servico_lab {
+  CODSERVICO Int     @id @default(autoincrement())
+  SERVICO    String? @db.VarChar(50)
+}
+
+model t_armacao_lab {
+  COD_ARMA__O       Int     @id @default(autoincrement()) @map("COD ARMAÇÃO")
+  TIPO_ARMA__O      String? @map("TIPO ARMAÇÃO") @db.VarChar(50)
+  tamanho_ARO       Float?  @default(0) @map("tamanho ARO") @db.Float
+  PONTE             Float?  @default(0) @db.Float
+  DIAGONAL          Float?  @default(0) @db.Float
+  dnp_calculo       Float?  @default(0) @map("dnp calculo") @db.Float
+  MODELO_FABRICANTE String? @map("MODELO FABRICANTE") @db.VarChar(50)
+}
+
+model t_cliente {
+  C_D                          Int       @id @default(autoincrement()) @map("CÓD")
+  clientes                     Float?
+  Nome                         String?   @db.VarChar(150)
+  Telefone                     String?   @db.VarChar(255)
+  Data_do_Cadastro             DateTime? @map("Data do Cadastro") @db.DateTime(0)
+  Endere_o                     String?   @map("Endereço") @db.VarChar(255)
+  Bairro                       String?   @db.VarChar(255)
+  Cidade                       String?   @db.VarChar(255)
+  Estado                       String?   @db.VarChar(255)
+  Cep                          String?   @db.VarChar(255)
+  Ultima_Compra                DateTime? @map("Ultima Compra") @db.DateTime(0)
+  Identidade                   String?   @db.VarChar(255)
+  CPF                          String?   @db.VarChar(255)
+  Data_do_Nascimento           String?   @map("Data do Nascimento") @db.VarChar(255)
+  Nome_do_Pai                  String?   @map("Nome do Pai") @db.VarChar(255)
+  Nome_da_M_e                  String?   @map("Nome da Mãe") @db.VarChar(255)
+  Profiss_o                    String?   @map("Profissão") @db.VarChar(255)
+  Local_de_trabalho            String?   @map("Local de trabalho") @db.VarChar(255)
+  Renda_Mensal                 String?   @map("Renda Mensal") @db.VarChar(255)
+  Estado_Civil                 String?   @map("Estado Civil") @db.VarChar(255)
+  Nome_do_Conjuge              String?   @map("Nome do Conjuge") @db.VarChar(255)
+  Local_de_trabalho_do_Conjuge String?   @map("Local de trabalho do Conjuge") @db.VarChar(255)
+  Referencias_Comerciais       String?   @map("Referencias Comerciais") @db.VarChar(255)
+  Consulta_SPC                 String?   @map("Consulta SPC") @db.VarChar(255)
+  Tempo_de_trabalho            String?   @map("Tempo de trabalho") @db.VarChar(255)
+  CELULAR                      String?   @db.VarChar(255)
+  Tel_Residencial              String?   @map("Tel Residencial") @db.VarChar(255)
+  Referencia_Pessoal           String?   @map("Referencia Pessoal") @db.VarChar(255)
+  s_ColLineage                 Bytes?
+  s_Generation                 Int?
+  s_GUID                       String?   @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage                    Bytes?
+
+  @@index([Identidade], map: "Identidade")
+  @@index([s_Generation], map: "s_Generation")
+}
+
+model t_cliente_lab {
+  COD_CLIENTE      Int      @id @default(autoincrement()) @map("COD CLIENTE")
+  NOME_DE_FANTASIA String?  @map("NOME DE FANTASIA") @db.VarChar(50)
+  RAZ_O            String?  @map("RAZÃO") @db.VarChar(50)
+  ENDERE_O         String?  @map("ENDEREÇO") @db.VarChar(50)
+  BAIRRO           String?  @db.VarChar(50)
+  CIDADE           String?  @db.VarChar(50)
+  ESTADO           String?  @db.VarChar(50)
+  TELEFONE         String?  @db.VarChar(50)
+  CONTATO          String?  @db.VarChar(50)
+  CEP              String?  @db.VarChar(50)
+  CGC              String?  @db.VarChar(50)
+  INSC             String?  @db.VarChar(50)
+  CREDITO          Boolean?
+}
+
+model t_comiss_o {
+  CONTROLE_COMISS_O Int     @id @default(autoincrement()) @map("CONTROLE COMISSÃO")
+  DESCRI__O         String? @unique(map: "DESCRIÇÃO") @map("DESCRIÇÃO") @db.VarChar(50)
+  ALIQUOTA          Float?  @default(0) @db.Float
+  s_ColLineage      Bytes?
+  s_Generation      Int?
+  s_GUID            String? @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage         Bytes?
+
+  @@index([s_Generation], map: "s_Generation")
+  @@map("t_comissão")
+}
+
+model t_despesas {
+  Contador          Int     @id @default(autoincrement())
+  C_digo_da_despesa Int?    @unique(map: "Código da despesa") @default(0) @map("Código da despesa")
+  TP                String? @db.VarChar(255)
+  DESCRI__O         String? @map("DESCRIÇÃO") @db.VarChar(255)
+  s_ColLineage      Bytes?
+  s_Generation      Int?
+  s_GUID            String? @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage         Bytes?
+
+  @@index([s_Generation], map: "s_Generation")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model t_detalhes_do_pedido_lab {
+  CONTROLE_DETALHE_PEDIDO Int       @default(autoincrement()) @map("CONTROLE DETALHE PEDIDO")
+  NUM_PEDIDO              String?   @map("NUM PEDIDO") @db.VarChar(50)
+  ITEM_DO_DETALHE_PEDIDO  Int?      @map("ITEM DO DETALHE PEDIDO")
+  QTE                     Float?    @db.Float
+  COD_PRODUTO             Int?      @map("COD PRODUTO")
+  unid                    String?   @db.VarChar(3)
+  descri__o               String?   @map("descrição") @db.VarChar(40)
+  custo                   Decimal?  @db.Decimal(19, 4)
+  venda                   Decimal?  @db.Decimal(19, 4)
+  FORNECEDOR_LAB          String?   @db.VarChar(50)
+  PED_FOR                 DateTime? @map("PED FOR") @db.DateTime(0)
+  PRE_O_UNITARIO_CUSTO    Decimal?  @map("PREÇO UNITARIO CUSTO") @db.Decimal(19, 4)
+  PRE_O_UNITARIO_VENDA    Decimal?  @map("PREÇO UNITARIO VENDA") @db.Decimal(19, 4)
+  CONTROLE_PEDIDO         Int?      @default(0) @map("CONTROLE PEDIDO")
+
+  @@index([COD_PRODUTO], map: "COD PRODUTO")
+  @@index([CONTROLE_DETALHE_PEDIDO], map: "CONTROLE DETALHE PEDIDO")
+  @@index([CONTROLE_PEDIDO], map: "CONTROLE PEDIDO")
+  @@index([NUM_PEDIDO], map: "NUM PEDIDO")
+  @@index([unid], map: "unid")
+  @@ignore
+}
+
+model t_estoque {
+  Codigo_do_Produto1 Int     @unique(map: "Codigo do Produto1") @default(autoincrement()) @map("Codigo do Produto1")
+  Codigo_do_Produto  Int?    @unique(map: "Codigo do Produto") @default(0) @map("Codigo do Produto")
+  Descri__o          String? @map("Descrição") @db.VarChar(50)
+  Saldo_Atual        Int?    @default(0) @map("Saldo Atual")
+  s_ColLineage       Bytes?
+  s_Generation       Int?
+  s_GUID             String? @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage          Bytes?
+
+  @@index([s_Generation], map: "s_Generation")
+}
+
+model t_fornecedor {
+  Contador      Int     @id @default(autoincrement())
+  Raz_o_Social  String? @map("Razão Social") @db.VarChar(50)
+  Nome_Fantasia String? @map("Nome Fantasia") @db.VarChar(50)
+  Endere_o      String? @map("Endereço") @db.VarChar(50)
+  CEP           String? @db.VarChar(50)
+  Bairro        String? @db.VarChar(50)
+  Cidade        String? @db.VarChar(50)
+  Estado        String? @db.VarChar(50)
+  Contato       String? @db.VarChar(50)
+  Tel_comercial String? @map("Tel comercial") @db.VarChar(50)
+  // This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 0800       String? @map("0800") @db.VarChar(50)
+  email         String? @db.VarChar(50)
+  Home_Page     String? @map("Home Page") @db.LongText
+  Fax           String? @db.VarChar(50)
+  Gen_Home_Page Int?    @map("Gen_Home Page")
+  s_ColLineage  Bytes?
+  s_Generation  Int?
+  s_GUID        String? @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage     Bytes?
+
+  @@index([s_Generation], map: "s_Generation")
+}
+
+model t_funcion_rios {
+  CodigodoFuncion_rio  Int       @unique(map: "CodigodoFuncionário") @default(autoincrement()) @map("CodigodoFuncionário")
+  Nome                 String?   @db.VarChar(50)
+  Endere_o             String?   @map("Endereço") @db.VarChar(50)
+  Bairro               String?   @db.VarChar(50)
+  Cidade               String?   @db.VarChar(50)
+  Estado               String?   @db.VarChar(50)
+  Telefone_Residencial String?   @map("Telefone Residencial") @db.VarChar(50)
+  Celular              String?   @db.VarChar(50)
+  Foto                 Bytes?
+  Codigo_da_Loja       Int?      @map("Codigo da Loja")
+  Fun__o               String?   @map("Função") @db.VarChar(50)
+  Data_de_Nascimento   DateTime? @map("Data de Nascimento") @db.DateTime(0)
+  RG                   String?   @db.VarChar(50)
+  CPF                  String?   @db.VarChar(50)
+  Pai                  String?   @db.VarChar(50)
+  M_e                  String?   @map("Mãe") @db.VarChar(50)
+  Tempo_de_trabalho    Int?      @map("Tempo de trabalho")
+  Gen_Foto             Int?
+  s_ColLineage         Bytes?
+  s_Generation         Int?
+  s_GUID               String?   @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage            Bytes?
+
+  @@index([Nome], map: "Nome")
+  @@index([s_Generation], map: "s_Generation")
+  @@map("t_funcionários")
+}
+
+model t_lentes_lab {
+  COD_LENTE    Int     @id @default(autoincrement()) @map("COD LENTE")
+  FABRICANTE   String? @db.VarChar(255)
+  NOME         String? @db.VarChar(255)
+  MATERIAL     String? @db.VarChar(255)
+  BASE_NOMINAL Float?  @default(0) @map("BASE NOMINAL") @db.Float
+  INDICE       Float?
+  FATOR        Float?  @db.Float
+  BASE_REAL    Float?  @map("BASE REAL") @db.Float
+  TIPO         String? @db.VarChar(255)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model t_lojas {
+  CODIGO_DA_LOJA      Int?    @unique(map: "CODIGO DA LOJA") @default(0) @map("CODIGO DA LOJA")
+  Raz_o_Social        String? @map("Razão Social") @db.VarChar(50)
+  Nome_Fantasia       String? @map("Nome Fantasia") @db.VarChar(50)
+  Endere_o            String? @map("Endereço") @db.VarChar(50)
+  Bairro              String? @db.VarChar(50)
+  Cidade              String? @db.VarChar(50)
+  Estado              String? @db.VarChar(50)
+  Cnpj                String? @db.VarChar(50)
+  Inscri__o_Estadual  String? @map("Inscrição Estadual") @db.VarChar(50)
+  Inscri__o_Municipal String? @map("Inscrição Municipal") @db.VarChar(50)
+  Telefone            String? @db.VarChar(50)
+  s_ColLineage        Bytes?
+  s_Generation        Int?
+  s_GUID              String? @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage           Bytes?
+
+  @@index([Nome_Fantasia], map: "Nome Fantasia")
+  @@index([s_Generation], map: "s_Generation")
+  @@ignore
+}
+
+model t_pagamento_entre_lojas {
+  Controle_pagar_M_Pataca Int       @id @default(autoincrement()) @map("Controle pagar M Pataca")
+  Reg_C_Pagar             Int?      @map("Reg C Pagar")
+  CodigodaLoja            String?   @db.VarChar(50)
+  Valor                   Decimal?  @db.Decimal(19, 4)
+  LIQUIDA__O              DateTime? @map("LIQUIDAÇÃO") @db.DateTime(0)
+  s_ColLineage            Bytes?
+  s_Generation            Int?
+  s_GUID                  String?   @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage               Bytes?
+
+  @@index([Reg_C_Pagar], map: "Reg C Pagar")
+  @@index([s_Generation], map: "s_Generation")
+  @@map("t_pagamento entre lojas")
+}
+
+model t_pagar {
+  CONTROLE_PAGAR        Int       @unique(map: "CONTROLE PAGAR") @default(autoincrement()) @map("CONTROLE PAGAR")
+  Codigo_Contas_a_Pagar Int?      @default(0) @map("Codigo Contas a Pagar")
+  Vcto                  DateTime? @db.DateTime(0)
+  Hist_rico             String?   @map("Histórico") @db.VarChar(255)
+  Fornec                String?   @db.VarChar(255)
+  doc                   String?   @db.VarChar(255)
+  Num                   String?   @db.VarChar(255)
+  Valor                 Float?
+  Liquida_ao            DateTime? @map("Liquidaçao") @db.DateTime(0)
+  Loja                  Float?
+  CODIGO_DA_DESPESA     Float?    @map("CODIGO DA DESPESA")
+  s_ColLineage          Bytes?
+  s_Generation          Int?
+  s_GUID                String?   @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage             Bytes?
+
+  @@index([s_Generation], map: "s_Generation")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model t_pagar_conflito {
+  ConflictRowGuid       String?   @db.VarChar(38)
+  CONTROLE_PAGAR        Int?      @map("CONTROLE PAGAR")
+  Codigo_Contas_a_Pagar Int?      @map("Codigo Contas a Pagar")
+  Vcto                  DateTime? @db.DateTime(0)
+  Hist_rico             String?   @map("Histórico") @db.VarChar(255)
+  Fornec                String?   @db.VarChar(255)
+  doc                   String?   @db.VarChar(255)
+  Num                   String?   @db.VarChar(255)
+  Valor                 Float?
+  Liquida_ao            DateTime? @map("Liquidaçao") @db.DateTime(0)
+  Loja                  Float?
+  CODIGO_DA_DESPESA     Float?    @map("CODIGO DA DESPESA")
+  s_ColLineage          Bytes?
+  s_Generation          Int?
+  s_GUID                String?   @db.VarChar(38)
+  s_Lineage             Bytes?
+
+  @@index([ConflictRowGuid], map: "ConflictRowGuid")
+  @@index([s_GUID], map: "s_GUID")
+  @@index([s_Generation], map: "s_Generation")
+  @@ignore
+}
+
+model t_pedidos {
+  Controle_Pedidos    Int       @unique(map: "Controle Pedidos") @default(autoincrement()) @map("Controle Pedidos")
+  Emiss_o             DateTime? @map("Emissão") @db.DateTime(0)
+  CodigodaLoja        Int?      @default(0)
+  Pedido              Int?
+  Cliente             String?   @db.VarChar(50)
+  CodigodoFuncion_rio String?   @map("CodigodoFuncionário") @db.VarChar(50)
+  Comiss_o            String?   @map("Comissão") @db.VarChar(50)
+  pedido_de_compra    Int?      @default(0) @map("pedido de compra")
+  fornecedor          String?   @db.VarChar(50)
+  s_ColLineage        Bytes?
+  s_Generation        Int?
+  s_GUID              String?   @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage           Bytes?
+
+  @@index([CodigodaLoja], map: "CodigodaLoja")
+  @@index([Comiss_o], map: "Comissão")
+  @@index([Pedido], map: "Pedido")
+  @@index([s_Generation], map: "s_Generation")
+}
+
+model t_pedidos_lab {
+  CONTROLE_PEDIDOS     Int       @id @default(autoincrement()) @map("CONTROLE PEDIDOS")
+  OCULOS_PARA          String?   @map("OCULOS PARA") @db.VarChar(50)
+  NUMERO_DE_PEDIDO     String    @unique(map: "NUMERO DE PEDIDO") @map("NUMERO DE PEDIDO") @db.VarChar(50)
+  HORA_EMISS_O         DateTime? @default(now()) @map("HORA EMISSÃO") @db.Timestamp(0)
+  EMISS_O              DateTime? @default(now()) @map("EMISSÃO") @db.Timestamp(0)
+  PROMETIDO            DateTime? @db.DateTime(0)
+  PED_FOR              DateTime? @map("PED FOR") @db.DateTime(0)
+  RECEBIDO             DateTime? @db.DateTime(0)
+  BAIXA                DateTime? @db.DateTime(0)
+  VENCIMENTO           DateTime? @db.DateTime(0)
+  LIQUIDA__O           DateTime? @map("LIQUIDAÇÃO") @db.DateTime(0)
+  COD_CLIENTE          Int       @map("COD CLIENTE")
+  COD_RECEITA          Int       @unique(map: "COD RECEITA") @map("COD RECEITA")
+  COD_LENTE            Int       @map("COD LENTE")
+  COD_ARMA__O          Int?      @map("COD ARMAÇÃO")
+  COD_SERVI_O          String    @map("COD SERVIÇO") @db.VarChar(50)
+  OCULOS_SO_PARA_PERTO Boolean?  @map("OCULOS SO PARA PERTO")
+  MONTAGEM             Boolean?  @default(false)
+
+  @@index([COD_CLIENTE], map: "COD CLIENTE")
+  @@index([OCULOS_PARA], map: "OCULOS PARA")
+}
+
+model t_produtos_lab {
+  C_D         Int      @id @default(autoincrement()) @map("CÓD")
+  cod_produto Int?     @default(0) @map("cod produto")
+  descri__o   String?  @map("descrição") @db.VarChar(40)
+  unid        String?  @db.VarChar(3)
+  custo       Decimal? @default(1.0000) @db.Decimal(19, 4)
+  venda       Decimal? @default(1.0000) @db.Decimal(19, 4)
+
+  @@index([cod_produto], map: "cod produto")
+  @@index([unid], map: "unid")
+}
+
+model t_receber {
+  C_D          Int       @id @default(autoincrement()) @map("CÓD")
+  Pedido       Float?
+  Parcela      String?   @db.VarChar(255)
+  Vencimento   DateTime? @db.DateTime(0)
+  Valor        Decimal?  @db.Decimal(19, 4)
+  Observa__o   String?   @map("Observação") @db.VarChar(255)
+  Liquida__o   DateTime? @map("Liquidação") @db.DateTime(0)
+  LOJA         Float?
+  Comiss_o     String?   @map("Comissão") @db.VarChar(255)
+  s_ColLineage Bytes?
+  s_Generation Int?
+  s_GUID       String?   @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage    Bytes?
+
+  @@index([Pedido], map: "Pedido")
+  @@index([s_Generation], map: "s_Generation")
+}
+
+model t_receita_lab {
+  COD_RECEITA Int    @id @default(autoincrement()) @map("COD RECEITA")
+  ODESF       Float? @default(0) @db.Float
+  ODCIL       Float? @default(0) @db.Float
+  ODEIXO      Float? @default(0) @db.Float
+  OEESF       Float? @default(0) @db.Float
+  OECIL       Float? @default(0) @db.Float
+  OEEIXO      Float? @default(0) @db.Float
+  ADI__O      Float? @default(0) @map("ADIÇÃO") @db.Float
+  ODDNP       Float? @default(0) @db.Float
+  OEDNP       Float? @default(0) @db.Float
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model tabela_de_custos {
+  Descri__o                     String?  @map("Descrição") @db.VarChar(50)
+  M_xDeValor_Unit_rio_de_compra Decimal? @map("MáxDeValor Unitário de compra") @db.Decimal(19, 4)
+  s_ColLineage                  Bytes?
+  s_Generation                  Int?
+  s_GUID                        String?  @unique(map: "s_GUID") @db.VarChar(38)
+  s_Lineage                     Bytes?
+
+  @@index([s_Generation], map: "s_Generation")
+  @@map("tabela de custos")
+  @@ignore
 }

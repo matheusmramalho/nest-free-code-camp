@@ -11,7 +11,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(params: teste): string {
+  getHello(params: teste) {
     return this.appService.getHello();
   }
 }
