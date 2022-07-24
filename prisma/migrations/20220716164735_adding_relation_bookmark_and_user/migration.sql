@@ -6,10 +6,10 @@
 
 */
 -- DropTable
-DROP TABLE `bookmark`;
+DROP TABLE `Bookmark`;
 
 -- DropTable
-DROP TABLE `user`;
+DROP TABLE `User`;
 
 -- CreateTable
 CREATE TABLE `users` (
