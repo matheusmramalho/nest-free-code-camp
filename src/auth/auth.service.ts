@@ -1,8 +1,8 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { User, Bookmark } from '@prisma/client'
+import { User, Bookmark } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto';
-import * as argon from 'argon2'
+import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -34,6 +34,7 @@ export class AuthService {
     }
 
     async signin(dto: AuthDto) {
+        console.log(dto);
         const user = await this.prismaService.user.findUnique({
             where: {
                 email: dto.email,
@@ -55,18 +56,18 @@ export class AuthService {
         return this.signToken(user.id, user.email);
     }
 
-    private async signToken(userId: number, email: string): Promise<{ access_token: string }> {
+    private async signToken(userId: number, email: string): Promise<{ access_token: string; }> {
         const payload = {
             sub: userId,
             email
-        }
-        const secret = this.config.get('JWT_SECRET')
+        };
+        const secret = this.config.get('JWT_SECRET');
         const token = await this.jwt.signAsync(payload, {
             expiresIn: "15m",
             secret: secret
         });
         return {
             access_token: token
-        }
+        };
     }
 }
