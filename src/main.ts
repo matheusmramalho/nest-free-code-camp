@@ -7,6 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Cats example')
     .setDescription('The cats API description')
     .setVersion('1.0')
