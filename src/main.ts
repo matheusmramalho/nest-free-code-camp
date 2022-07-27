@@ -8,8 +8,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
   const config = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('OMP System 2022')
+    .setDescription('API do sistema Ótica meia pataca')
     .setVersion('1.0')
     .addTag('cats')
     .build();
